@@ -1,0 +1,13 @@
+Certain objects in Flask are global objects, but not of the usual kind.
+These objects are actually proxies to objects that are local to a specific context.
+What a mouthful. But that is actually quite easy to understand.
+
+Imagine the context being the handling thread. A request comes in and the web server
+decides to spawn a new thread (or something else, the underlying object is capable of
+dealing with concurrency systems other than threads). When Flask starts its internal
+request handling it figures out that the current thread is the active context and binds
+the current application and the WSGI environments to that context (thread). It does that
+in an intelligent way so that one application can invoke another application without breaking.
+
+So what does this mean to you? Basically you can completely ignore that this is the case
+unless you are doing something like unit testing.
