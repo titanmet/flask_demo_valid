@@ -14,9 +14,8 @@ class ContactForm(FlaskForm):
         validators.Length(min=6, max=35),
         validators.Email()
     ])
-    job = StringField(label='JOB', validators=[
-        validators.Length(min=1, max=35),
-        validators.Optional()
+    job = StringField(label='Job', validators=[
+        validators.AnyOf('IT'),
     ])
 
 
@@ -42,7 +41,3 @@ def home():
 
     if request.method == 'GET':
         return 'hello world!', 200
-
-
-if __name__ == '__main__':
-    app.run()
