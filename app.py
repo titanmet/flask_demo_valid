@@ -1,7 +1,41 @@
-from flask import Flask
+from flask import Flask, request
 from flask.json import jsonify
+from flask_wtf import FlaskForm
+from wtforms import StringField, validators, ValidationError
 
 app = Flask(__name__)
+
+
+def confirm_password(form, field):
+    if form.data['password'] != form.data['confirm_password']:
+        raise ValidationError('Password not correct')
+
+class UserForm(FlaskForm):
+    email = StringField(label='E-mail', validators=[
+        validators.Length(min=5, max=35),
+        validators.Email()
+    ])
+    password = StringField(label='password:', validators=[
+        validators.Length(min=6, max=12)
+    ])
+    confirm_password = StringField(label='confirm password:', validators=[
+        validators.Length(min=6, max=20), confirm_password
+    ])
+
+
+@app.route('/form/user', methods=['GET', 'POST'])
+def post_data():
+    if request.method == 'POST':
+        user_form = UserForm(request.form)
+        status_output = {0: 'Valid', 1: 'Incorrect'}
+        if user_form.validate():
+            status_check = jsonify(status_output[0])
+            return status_check
+        else:
+            status_check = jsonify(status_output[1])
+            error_list = jsonify(user_form.errors)
+            return status_check and error_list
+    return 'Done !'
 
 
 @app.route('/hello/<user>')
@@ -29,13 +63,16 @@ def locales():
     my_loc = {'ru': 'russian', 'en': 'english', 'it': 'italy'}
     return jsonify(my_loc)
 
+
 @app.route('/sum/<int:x>/<int:y>')
 def sum(x, y):
     return 'Summa : {}'.format(x + y)
 
+
 @app.route('/greet/<user_name>')
 def greet(user_name):
     return 'Hello , {} !'.format(user_name)
+
 
 if __name__ == '__main__':
     app.run()
