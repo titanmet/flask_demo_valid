@@ -8,7 +8,7 @@ app.config.update(
     WTF_CSRF_ENABLED=False,
 )
 app.config['DEBUG'] = True
-#app.config['SECRET_KEY'] = os.environ['S']
+# app.config['SECRET_KEY'] = os.environ['S']
 
 
 @app.route('/', methods=['GET', 'POST'])
